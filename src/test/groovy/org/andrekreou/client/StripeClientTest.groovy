@@ -25,7 +25,6 @@ class StripeClientTest {
 
         //when: calling the balance transactions retrieval
         def response = stripeClient.retrieveBalanceTransactions(limit)
-        println response
 
         //then: the response is not null
         assertNotNull(response)

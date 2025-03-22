@@ -3,11 +3,13 @@ package org.andrekreou.client;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.andrekreou.mapper.StripeApiExceptionMapper;
 import org.andrekreou.response.BalanceResponse;
+import org.andrekreou.response.BalanceTransaction;
 import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -45,6 +47,23 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @Produces(MediaType.APPLICATION_JSON)
 @ClientHeaderParam(name = "Authorization", value = "${stripe.sandbox.key}")
 public interface StripeClient {
+
+    /**
+     * Retrieves a balance transaction that represent funds moving through Stripe account using
+     * a transaction id.
+     * <p>
+     * This method sends a GET request to the {@code /balance_transactions/{id}} endpoint of Stripe
+     * to fetch the details of a balance transaction.
+     * </p>
+     *
+     * @param transactionId the id of the transaction to fetch
+     * @return the {@link BalanceTransaction} object representing the balance transaction response
+     */
+    @GET
+    @Path("/balance_transactions/{id}")
+    BalanceTransaction retrieveBalanceTransaction(
+            @PathParam("id") String transactionId
+    );
 
     /**
      * Retrieves the balance transactions that represent funds moving through Stripe account.
