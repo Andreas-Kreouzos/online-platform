@@ -1,15 +1,20 @@
 package org.andrekreou.client;
 
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
+import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
+import org.andrekreou.dto.response.CreateProductResponse;
+import org.andrekreou.dto.response.ProductDeleteResponse;
 import org.andrekreou.mapper.StripeApiExceptionMapper;
-import org.andrekreou.response.BalanceResponse;
-import org.andrekreou.response.BalanceTransaction;
+import org.andrekreou.dto.response.BalanceResponse;
+import org.andrekreou.dto.response.BalanceTransactionResponse;
 import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
@@ -43,7 +48,6 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
  */
 @RegisterRestClient(configKey = "stripe")
 @RegisterProvider(StripeApiExceptionMapper.class)
-@Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 @ClientHeaderParam(name = "Authorization", value = "${stripe.sandbox.key}")
 public interface StripeClient {
@@ -57,11 +61,11 @@ public interface StripeClient {
      * </p>
      *
      * @param transactionId the id of the transaction to fetch
-     * @return the {@link BalanceTransaction} object representing the balance transaction response
+     * @return the {@link BalanceTransactionResponse} object representing the balance transaction response
      */
     @GET
     @Path("/balance_transactions/{id}")
-    BalanceTransaction retrieveBalanceTransaction(
+    BalanceTransactionResponse retrieveBalanceTransaction(
             @PathParam("id") String transactionId
     );
 
@@ -79,5 +83,40 @@ public interface StripeClient {
     @Path("/balance_transactions")
     BalanceResponse retrieveBalanceTransactions(
             @QueryParam("limit") int limit
+    );
+
+    /**
+     * Creates a new product to be purchased from customers.
+     * <p>
+     * This method sends a POST request to the {@code /products} endpoint of Stripe to create a
+     * new product.
+     * </p>
+     *
+     * @param name        the name of the product
+     * @param description the description of the product
+     * @return the {@link CreateProductResponse} object representing the product creation response
+     */
+    @POST
+    @Path("/products")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    CreateProductResponse create(
+            @FormParam("name") String name,
+            @FormParam("description") String description
+    );
+
+    /**
+     * Deletes a product based on the provided ID.
+     * <p>
+     * This method sends a DELETE request to the {@code /products} endpoint of Stripe to delete a product.
+     * </p>
+     *
+     * @param productId the ID of the product to be deleted
+     * @return the {@link ProductDeleteResponse} object representing the product deletion response
+     */
+    @DELETE
+    @Path("/products/{id}")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    ProductDeleteResponse delete(
+            @PathParam("id") String productId
     );
 }

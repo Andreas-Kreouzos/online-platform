@@ -1,4 +1,4 @@
-package org.andrekreou.dto;
+package org.andrekreou.dto.response;
 
 import java.util.Collections;
 import java.util.List;

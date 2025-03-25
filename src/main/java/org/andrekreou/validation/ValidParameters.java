@@ -1,6 +1,6 @@
 package org.andrekreou.validation;
 
-import org.andrekreou.dto.RetrieveTransaction;
+import org.andrekreou.dto.request.RetrieveTransactionRequest;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Custom annotation for validation of {@link RetrieveTransaction}
+ * Custom annotation for validation of {@link RetrieveTransactionRequest}
  * fields based on the constraints provided by {@link ValidParametersValidator}
  */
 @Target(ElementType.TYPE)

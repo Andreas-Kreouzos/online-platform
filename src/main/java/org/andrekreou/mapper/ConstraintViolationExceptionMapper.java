@@ -1,6 +1,6 @@
 package org.andrekreou.mapper;
 
-import org.andrekreou.dto.ErrorResponse;
+import org.andrekreou.dto.response.ErrorResponse;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;

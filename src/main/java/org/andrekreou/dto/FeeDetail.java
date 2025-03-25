@@ -1,4 +1,4 @@
-package org.andrekreou.response;
+package org.andrekreou.dto;
 
 /**
  * Contains the fee details that is being applied from Stripe

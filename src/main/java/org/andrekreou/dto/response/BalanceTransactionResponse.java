@@ -1,11 +1,13 @@
-package org.andrekreou.response;
+package org.andrekreou.dto.response;
+
+import org.andrekreou.dto.FeeDetail;
 
 import java.util.List;
 
 /**
  * Contains the balance transaction information from Stripe
  */
-public class BalanceTransaction {
+public class BalanceTransactionResponse {
 
     private String id;
     private String object;

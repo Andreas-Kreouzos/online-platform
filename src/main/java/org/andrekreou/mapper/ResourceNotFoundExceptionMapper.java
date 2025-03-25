@@ -3,7 +3,7 @@ package org.andrekreou.mapper;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
-import org.andrekreou.dto.ErrorResponse;
+import org.andrekreou.dto.response.ErrorResponse;
 import org.andrekreou.exception.ResourceNotFoundException;
 
 import java.util.List;

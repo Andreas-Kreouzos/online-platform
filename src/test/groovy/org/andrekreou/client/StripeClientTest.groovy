@@ -2,6 +2,7 @@ package org.andrekreou.client
 
 import io.quarkus.test.junit.QuarkusTest
 import org.andrekreou.exception.StripeApiException
+import org.andrekreou.util.Fixtures
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -18,7 +19,7 @@ class StripeClientTest {
     StripeClient stripeClient
 
     @Test
-    @DisplayName("200 OK response when successfully call the balance transactions retrieval")
+    @DisplayName("Successfully call the balance transactions retrieval")
     void testSuccessfulCallingBalanceTransactions() {
         //given: the number of transactions to be displayed
         def limit = 1
@@ -31,6 +32,31 @@ class StripeClientTest {
 
         //and: one transaction gets indeed returned
         assertEquals(1, response.getData().size())
+    }
+
+    @Test
+    @DisplayName("Successfully create a new product and then delete it")
+    void testSuccessfullyCreateAndDeleteProduct() {
+        //given: a product to be created
+        def product = Fixtures.createProduct()
+
+        //when: calling the client to create the product
+        def response = stripeClient.create(product.productName, product.productDescription)
+
+        //then: the creation response is not null
+        assertNotNull(response)
+
+        //and: the expected product name matches the actual
+        assertEquals('testName', response.name)
+
+        //when: calling the client to delete the product
+        def deleteResponse = stripeClient.delete(response.id)
+
+        //then: the deletion response is not null
+        assertNotNull(deleteResponse)
+
+        //and: the product was indeed deleted
+        assertTrue(deleteResponse.deleted)
     }
 
     @Test

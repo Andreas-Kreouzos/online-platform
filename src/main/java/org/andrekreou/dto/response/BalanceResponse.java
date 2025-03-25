@@ -1,4 +1,4 @@
-package org.andrekreou.response;
+package org.andrekreou.dto.response;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
 public class BalanceResponse {
 
     private String object;
-    private List<BalanceTransaction> data;
+    private List<BalanceTransactionResponse> data;
     private boolean hasMore;
     private String url;
 
@@ -31,7 +31,7 @@ public class BalanceResponse {
     /**
      * @return The data
      */
-    public List<BalanceTransaction> getData() {
+    public List<BalanceTransactionResponse> getData() {
         return data;
     }
 
@@ -40,7 +40,7 @@ public class BalanceResponse {
      *
      * @param data The new value to set
      */
-    public void setData(List<BalanceTransaction> data) {
+    public void setData(List<BalanceTransactionResponse> data) {
         this.data = data;
     }
 
