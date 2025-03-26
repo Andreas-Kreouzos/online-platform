@@ -3,6 +3,7 @@ package org.andrekreou.resource;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
@@ -55,7 +56,7 @@ public class StripeResource {
     @Path("/transaction")
     @GET
     @RolesAllowed("admin")
-    public Response retrieve(@RequestBody @Valid RetrieveTransactionRequest retrieveTransactionRequest) {
+    public Response retrieve(@BeanParam @Valid RetrieveTransactionRequest retrieveTransactionRequest) {
         BalanceTransactionResponse response = service.retrieveTransaction(retrieveTransactionRequest);
         return Response.ok(response).build();
     }
