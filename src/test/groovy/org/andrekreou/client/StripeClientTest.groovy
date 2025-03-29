@@ -2,7 +2,7 @@ package org.andrekreou.client
 
 import io.quarkus.test.junit.QuarkusTest
 import org.andrekreou.exception.StripeApiException
-import org.andrekreou.util.Fixtures
+import util.Fixtures
 import org.eclipse.microprofile.rest.client.inject.RestClient
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

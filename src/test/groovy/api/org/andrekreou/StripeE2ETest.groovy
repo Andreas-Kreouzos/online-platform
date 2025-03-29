@@ -124,8 +124,38 @@ class StripeE2ETest {
             loginForm.getButtonByName("login").click()
         })
 
-        //and: the status code is 403 with the appropriate message
+        //and: the status code is 403 with the status appropriate message
         assertEquals(403, exception.getStatusCode())
         assertEquals("Forbidden", exception.getStatusMessage())
+    }
+
+    @Test
+    @DisplayName("400 Bad Request response when no transaction ID provided")
+    void testBadRequestResponseWhenNoTransactionIdProvided() {
+        //when: calling the secured resource with no transaction ID
+        HtmlPage loginPage = webClient.getPage("http://localhost:8080/stripe/transaction")
+
+        //and: the login form of Keycloak gets loaded
+        HtmlForm loginForm = loginPage.getForms().get(0)
+
+        //and: providing the appropriate user credentials
+        loginForm.getInputByName("username").type(adminUsername)
+        loginForm.getInputByName("password").type(adminPassword)
+
+        //then: submitting the form, an exception is expected
+        def exception = assertThrows(FailingHttpStatusCodeException.class, () -> {
+            loginForm.getButtonByName("login").click()
+        })
+
+        //and: the status code is 400 with the status appropriate message
+        assertEquals(400, exception.getStatusCode())
+        assertEquals("Bad Request", exception.getStatusMessage())
+
+        //and: parse the exception response
+        String jsonResponse = exception.getResponse().getContentAsString()
+        def parsedJson = new JsonSlurper().parseText(jsonResponse)
+
+        //and: the actual error message gets returned
+        assertEquals(["Missing Parameter Violation: Transaction ID is mandatory."], parsedJson.errors)
     }
 }

@@ -1,4 +1,4 @@
-package org.andrekreou.util
+package util
 
 import org.andrekreou.dto.request.CreateProductRequest
 
