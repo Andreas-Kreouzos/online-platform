@@ -3,6 +3,7 @@ package api.org.andrekreou
 import groovy.json.JsonSlurper
 import io.quarkus.test.junit.QuarkusTest
 import org.eclipse.microprofile.config.inject.ConfigProperty
+import org.htmlunit.FailingHttpStatusCodeException
 import org.htmlunit.WebClient
 import org.htmlunit.html.HtmlForm
 import org.htmlunit.html.HtmlPage
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.assertEquals
 import static org.junit.jupiter.api.Assertions.assertTrue
+import static org.junit.jupiter.api.Assertions.assertThrows
 
 @QuarkusTest
 class StripeE2ETest {
@@ -19,10 +21,16 @@ class StripeE2ETest {
     WebClient webClient
 
     @ConfigProperty(name = 'stripe.admin.username')
-    String username
+    String adminUsername
 
     @ConfigProperty(name = 'stripe.admin.password')
-    String password
+    String adminPassword
+
+    @ConfigProperty(name = 'stripe.trainer.username')
+    String trainerUsername
+
+    @ConfigProperty(name = 'stripe.trainer.password')
+    String trainerPassword
 
     @BeforeEach
     void setup() {
@@ -45,8 +53,8 @@ class StripeE2ETest {
         HtmlForm loginForm = loginPage.getForms().get(0)
 
         //and: providing the appropriate user credentials
-        loginForm.getInputByName("username").type(username)
-        loginForm.getInputByName("password").type(password)
+        loginForm.getInputByName("username").type(adminUsername)
+        loginForm.getInputByName("password").type(adminPassword)
 
         //and: submitting the form
         def loginResponse = loginForm.getButtonByName("login").click()
@@ -82,7 +90,7 @@ class StripeE2ETest {
         HtmlForm loginForm = loginPage.getForms().get(0)
 
         //and: providing incorrect user credentials
-        loginForm.getInputByName('username').type(username)
+        loginForm.getInputByName('username').type(adminUsername)
         loginForm.getInputByName('password').type(wrongPassword)
 
         //and: submitting the form
@@ -95,4 +103,29 @@ class StripeE2ETest {
         assertTrue(pageContent.contains(errorMessage))
     }
 
+    @Test
+    @DisplayName("403 Forbidden response for user without sufficient roles")
+    void testForbiddenResponseForUserWithoutSufficientRoles() {
+        //given: a valid transaction ID
+        String transactionId = 'txn_3R2xAKFZLv1HNLFS1SQXtbmq'
+
+        //when: calling the secured resource
+        HtmlPage loginPage = webClient.getPage("http://localhost:8080/stripe/transaction?id=${transactionId}")
+
+        //and: the login form of Keycloak gets loaded
+        HtmlForm loginForm = loginPage.getForms().get(0)
+
+        //and: providing valid credentials for a user without sufficient roles
+        loginForm.getInputByName("username").type(trainerUsername)
+        loginForm.getInputByName("password").type(trainerPassword)
+
+        //then: submitting the form, an exception is expected
+        def exception = assertThrows(FailingHttpStatusCodeException.class, () -> {
+            loginForm.getButtonByName("login").click()
+        })
+
+        //and: the status code is 403 with the appropriate message
+        assertEquals(403, exception.getStatusCode())
+        assertEquals("Forbidden", exception.getStatusMessage())
+    }
 }
