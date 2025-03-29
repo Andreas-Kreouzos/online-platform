@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertTrue
 
 @QuarkusTest
 class StripeE2ETest {
@@ -37,7 +38,7 @@ class StripeE2ETest {
         //given: a valid transaction ID
         String transactionId = 'txn_3R2xAKFZLv1HNLFS1SQXtbmq'
 
-        //when: calling the resource
+        //when: calling the secured resource
         HtmlPage loginPage = webClient.getPage("http://localhost:8080/stripe/transaction?id=${transactionId}")
 
         //and: the login form of Keycloak gets loaded
@@ -61,4 +62,37 @@ class StripeE2ETest {
         assertEquals('eur', parsedJson.currency)
         assertEquals('available', parsedJson.status)
     }
+
+    @Test
+    @DisplayName("Retrieve transaction failed due to incorrect password")
+    void testCannotAccessSecuredEndpointDueToLoginFailWithWrongPassword() {
+        //given: a valid transaction ID
+        String transactionId = 'txn_3R2xAKFZLv1HNLFS1SQXtbmq'
+
+        //and: an incorrect password
+        String wrongPassword = 'wrong_password'
+
+        //and: a Keycloak error message
+        String errorMessage = 'Invalid username or password.'
+
+        //when: calling the secured resource
+        HtmlPage loginPage = webClient.getPage("http://localhost:8080/stripe/transaction?id=${transactionId}")
+
+        //and: the login form of Keycloak gets loaded
+        HtmlForm loginForm = loginPage.getForms().get(0)
+
+        //and: providing incorrect user credentials
+        loginForm.getInputByName('username').type(username)
+        loginForm.getInputByName('password').type(wrongPassword)
+
+        //and: submitting the form
+        HtmlPage errorPage = loginForm.getButtonByName('login').click()
+
+        //then: the page of Keycloak gets returned as text
+        String pageContent = errorPage.asNormalizedText()
+
+        //and: contains the appropriate error message
+        assertTrue(pageContent.contains(errorMessage))
+    }
+
 }
