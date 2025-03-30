@@ -24,6 +24,7 @@ dependencies {
     implementation 'io.quarkiverse.groovy:quarkus-groovy:3.18.0'
 
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation 'io.quarkus:quarkus-test-security'
     testImplementation 'org.htmlunit:htmlunit:4.11.1'
