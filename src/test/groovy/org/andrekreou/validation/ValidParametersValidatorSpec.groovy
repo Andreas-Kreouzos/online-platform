@@ -21,7 +21,7 @@ class ValidParametersValidatorSpec extends Specification {
         nodeBuilder = Mock()
     }
 
-    def 'Successfully return true for transaction ID #transactionId'() {
+    def 'Successfully return true for transaction ID'() {
         given: 'the provided request dto'
         def retrieveTransactionRequest = new RetrieveTransactionRequest(transactionId: '123')
 
