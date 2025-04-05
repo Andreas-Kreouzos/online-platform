@@ -37,6 +37,11 @@ public class StripeService implements IStripeService {
      */
     @Override
     public CreateProductResponse createProduct(CreateProductRequest createProductRequest) {
-        return stripeClient.create(createProductRequest.getProductName(), createProductRequest.getProductDescription());
+        return stripeClient.create(
+                createProductRequest.getProductName(),
+                createProductRequest.getProductDescription(),
+                createProductRequest.getCurrency(),
+                createProductRequest.getAmount()
+        );
     }
 }

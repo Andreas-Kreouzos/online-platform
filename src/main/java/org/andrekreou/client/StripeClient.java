@@ -101,7 +101,9 @@ public interface StripeClient {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     CreateProductResponse create(
             @FormParam("name") String name,
-            @FormParam("description") String description
+            @FormParam("description") String description,
+            @FormParam("default_price_data[currency]") String currency,
+            @FormParam("default_price_data[unit_amount]") Integer unitAmount
     );
 
     /**

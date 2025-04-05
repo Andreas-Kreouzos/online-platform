@@ -37,11 +37,11 @@ class StripeClientTest {
     @Test
     @DisplayName("Successfully create a new product and then delete it")
     void testSuccessfullyCreateAndDeleteProduct() {
-        //given: a product to be created
-        def product = Fixtures.createProduct()
+        //given: a product without price
+        def product = Fixtures.createProductWithoutPrice()
 
         //when: calling the client to create the product
-        def response = stripeClient.create(product.productName, product.productDescription)
+        def response = stripeClient.create(product.productName, product.productDescription, product.currency, product.amount)
 
         //then: the creation response is not null
         assertNotNull(response)
