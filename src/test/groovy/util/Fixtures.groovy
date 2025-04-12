@@ -10,4 +10,13 @@ class Fixtures {
         request.setProductDescription('testDescription')
         request
     }
+
+    static def createProduct() {
+        CreateProductRequest request = new CreateProductRequest()
+        request.setProductName('testName')
+        request.setProductDescription('testDescription')
+        request.setCurrency('EUR')
+        request.setAmount(1000)
+        request
+    }
 }

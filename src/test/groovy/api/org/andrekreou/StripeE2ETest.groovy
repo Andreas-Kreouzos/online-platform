@@ -1,17 +1,24 @@
 package api.org.andrekreou
 
+import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import io.quarkus.test.junit.QuarkusTest
+import jakarta.ws.rs.core.MediaType
 import org.eclipse.microprofile.config.inject.ConfigProperty
 import org.htmlunit.FailingHttpStatusCodeException
+import org.htmlunit.HttpMethod
+import org.htmlunit.Page
 import org.htmlunit.WebClient
+import org.htmlunit.WebRequest
 import org.htmlunit.html.HtmlForm
 import org.htmlunit.html.HtmlPage
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import util.Fixtures
 
 import static org.junit.jupiter.api.Assertions.assertEquals
+import static org.junit.jupiter.api.Assertions.assertNotNull
 import static org.junit.jupiter.api.Assertions.assertTrue
 import static org.junit.jupiter.api.Assertions.assertThrows
 
@@ -69,6 +76,69 @@ class StripeE2ETest {
         assertEquals(transactionId, parsedJson.id)
         assertEquals('eur', parsedJson.currency)
         assertEquals('available', parsedJson.status)
+    }
+
+    @Test
+    @DisplayName("Successfully create a product with a trainer role")
+    void testSuccessfullyCreateProductAsTrainer() {
+        //given: the login endpoint for user authentication
+        def loginEndpoint = 'http://localhost:8080/stripe/login'
+
+        //when: calling the secured login endpoint
+        HtmlPage loginPage = webClient.getPage(loginEndpoint)
+
+        //and: the login form of Keycloak gets loaded
+        HtmlForm loginForm = loginPage.getForms().get(0)
+
+        //and: user provides the appropriate credentials
+        loginForm.getInputByName("username").type(trainerUsername)
+        loginForm.getInputByName("password").type(trainerPassword)
+
+        //and: submits the form
+        def loginResponse = loginForm.getButtonByName("login").click()
+
+        //and: a 200 status code is expected
+        assertEquals(200, loginResponse.webResponse.statusCode)
+
+        //then: the user gets logged in
+        String user = loginResponse.getWebResponse().getContentAsString()
+
+        //and: parse the login response
+        def userJson = new JsonSlurper().parseText(user)
+
+        //and: the login endpoint was called from a trainer
+        assertEquals(trainerUsername, userJson.userName)
+
+        //when: the endpoint to create a product gets provided
+        def endpoint = 'http://localhost:8080/stripe/product'
+
+        //and: preparing the post request
+        def request = new WebRequest(new URL(endpoint), HttpMethod.POST)
+
+        //and: with the appropriate payload
+        def payload = Fixtures.createProduct()
+
+        //and: transform the payload as JSON string
+        String json = JsonOutput.toJson(payload)
+
+        //and: set it as header in the request along with the media type
+        request.setAdditionalHeader("Content-Type", MediaType.APPLICATION_JSON)
+        request.setRequestBody(json)
+
+        //and: calling the product endpoint
+        Page responsePage = webClient.getPage(request)
+
+        //then: the endpoint response gets returned
+        String response = responsePage.getWebResponse().getContentAsString()
+
+        //and: parse the response
+        def parsedJson = new JsonSlurper().parseText(response)
+
+        //and: the expected field values are matched with the actual ones
+        assertNotNull(parsedJson.id)
+        assertNotNull(parsedJson.default_price)
+        assertEquals('testDescription', parsedJson.description)
+        assertEquals('testName', parsedJson.name)
     }
 
     @Test
