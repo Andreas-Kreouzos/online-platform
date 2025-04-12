@@ -1,6 +1,7 @@
 package util
 
 import org.andrekreou.dto.request.CreateProductRequest
+import org.andrekreou.dto.response.CreateProductResponse
 
 class Fixtures {
 
@@ -18,5 +19,11 @@ class Fixtures {
         request.setCurrency('EUR')
         request.setAmount(1000)
         request
+    }
+
+    static def createProductResponse() {
+        CreateProductResponse response = new CreateProductResponse()
+        response.setId('testId')
+        response
     }
 }
