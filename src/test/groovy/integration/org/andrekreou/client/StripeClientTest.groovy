@@ -1,6 +1,7 @@
-package org.andrekreou.client
+package integration.org.andrekreou.client
 
 import io.quarkus.test.junit.QuarkusTest
+import org.andrekreou.client.StripeClient
 import org.andrekreou.exception.StripeApiException
 import util.Fixtures
 import org.eclipse.microprofile.rest.client.inject.RestClient
