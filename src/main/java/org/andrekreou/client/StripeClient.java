@@ -53,7 +53,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public interface StripeClient {
 
     /**
-     * Retrieves a balance transaction that represent funds moving through Stripe account using
+     * Retrieves a balance transaction that represents funds moving through a Stripe account using
      * a transaction id.
      * <p>
      * This method sends a GET request to the {@code /balance_transactions/{id}} endpoint of Stripe
@@ -70,7 +70,7 @@ public interface StripeClient {
     );
 
     /**
-     * Retrieves the balance transactions that represent funds moving through Stripe account.
+     * Retrieves the balance transactions that represent funds moving through a Stripe account.
      * <p>
      * This method sends a GET request to the {@code /balance_transactions} endpoint of Stripe
      * to fetch the details of balance transactions.
