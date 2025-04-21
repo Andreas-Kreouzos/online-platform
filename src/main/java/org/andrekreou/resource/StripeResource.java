@@ -1,7 +1,5 @@
 package org.andrekreou.resource;
 
-import io.quarkus.oidc.UserInfo;
-import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
@@ -18,7 +16,6 @@ import org.andrekreou.dto.response.CreateProductResponse;
 import org.andrekreou.dto.response.ErrorResponse;
 import org.andrekreou.dto.request.RetrieveTransactionRequest;
 import org.andrekreou.dto.response.BalanceTransactionResponse;
-import org.andrekreou.entity.User;
 import org.andrekreou.service.IStripeService;
 import org.andrekreou.client.StripeClient;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -36,37 +33,8 @@ public class StripeResource {
     @Inject
     IStripeService service;
 
-    @Inject
-    UserInfo userInfo;
-
     /**
-     * Initiates the authorization procedures and data retrieval process for a {@link User} regardless of the role.
-     * <p>
-     * This endpoint is accessed by users to start the authorization flow. It triggers the OAuth2 authorization
-     * code flow with Proof of Key Code Exchange (PKCE). Upon successful authentication, the user's data is being
-     * retrieved and then persisted in the database.
-     * </p>
-     *
-     * @return a {@link Response} that returns the {@link User} entity.
-     */
-    @Operation(summary = "Responsible for starting the authorization code flow with PKCE and user persistence")
-    @APIResponses(value = {
-            @APIResponse(responseCode = "200", description = "Successfully authorized and persisted the user",
-                    content = {@Content(mediaType = MediaType.APPLICATION_JSON,
-                            schema = @Schema(implementation = Response.class))}),
-            @APIResponse(responseCode = "500", description = "Unknown error occurred",
-                    content = @Content)})
-    @Path("/login")
-    @GET
-    @Authenticated
-    public Response login() {
-        System.out.println(userInfo.getUserInfoString());
-        User user = User.create(userInfo);
-        return Response.ok(user).build();
-    }
-
-    /**
-     * Receives the transaction ID, in order to retrieve the related balance transaction
+     * Receives the transaction ID to retrieve the related balance transaction
      * details via {@link StripeClient}
      *
      * @param retrieveTransactionRequest the object that contains the transaction ID
